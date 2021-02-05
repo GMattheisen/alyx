@@ -1,0 +1,99 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+.collapsed {
+    display: none;
+    width: 100%;
+}
+.collapse caption a {
+    color: white;
+}
+.collapse table {
+    width: 100%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+{% if app_list %}
+    {% for app in app_list %}
+        <div class="app-{{ app.app_label }} module collapse">
+        <table>
+        <caption>
+            {{ app.name }}
+        </caption>
+        <tbody class="{{ app.collapsed }}">
+        {% for model in app.models %}
+            <tr class="model-{{ model.object_name|lower }}">
+            {% if model.admin_url %}
+                <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% else %}
+                <th scope="row">{{ model.name }}</th>
+            {% endif %}
+
+            {% if model.add_url %}
+                <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+
+            {% if False %}
+                <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+            {% else %}
+                <td>&nbsp;</td>
+            {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+</div>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/vendor/jquery/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript">
+(function($) {
+    'use strict';
+    $(document).ready(function() {
+        // Add anchor tag for Show/Hide link
+        $("div.collapse").each(function(i, elem) {
+            // Don't hide if fields in this div have errors
+            if ($(elem).find("div.errors").length === 0) {
+                var text = "Hide";
+                if ($(elem).find("tbody").hasClass("collapsed")) {
+                    text = "Show";
+                }
+                $(elem).find("caption").first().append(' (<a id="divcollapser' +
+                    i + '" class="collapse-toggle" href="#">' + text +
+                    '</a>)');
+            }
+        });
+        // Add toggle to anchor tag
+        $("div.collapse a.collapse-toggle").click(function(ev) {
+            var tbody = $(this).parent().parent().find("tbody");
+
+            if (tbody.hasClass("collapsed")) {
+                // Show
+                $(this).text("Hide");
+                tbody.removeClass("collapsed");
+            } else {
+                // Hide
+                $(this).text("Show");
+                tbody.addClass("collapsed");
+            }
+            return false;
+        });
+    });
+})(django.jQuery);
+
+</script>
+{% endblock %}
