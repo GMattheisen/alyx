@@ -33,6 +33,7 @@
     <tr>
         <th>session</th>
         <th>project</th>
+        <th>batch</th>
         <th>protocol</th>
         <th>qc</th>
         {% for task in task_names %}
@@ -46,6 +47,7 @@
     <tr>
         <td><a href="{% url 'admin:actions_session_change' obj.id %}">{{ obj | stringformat:"s"}}</a></td>
         <td>{{ obj.project.name }}</td>
+        <td>{{ obj.batch.name }}</td>
         <td>{{ obj.task_protocol }}</td>
         {% if obj.qc == 50%}  {# CRITICAL red #}
             <td><a style="color:Tomato">{{ obj.get_qc_display }}</a></td>

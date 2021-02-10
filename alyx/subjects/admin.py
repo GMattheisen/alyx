@@ -16,7 +16,7 @@ from alyx.base import (BaseAdmin, BaseInlineAdmin, DefaultListFilter, get_admin_
                        _iter_history_changes)
 from .models import (Allele, BreedingPair, GenotypeTest, Line, Litter, Sequence, Source,
                      Species, Strain, Subject, SubjectRequest, Zygosity, ZygosityRule,
-                     Project,
+                     Project, Batch,
                      )
 from actions.models import (
     Surgery, Session, OtherAction, WaterAdministration, WaterRestriction, Weighing)
@@ -189,6 +189,26 @@ class ProjectAdmin(BaseAdmin):
     subjects_count.short_description = '# subjects'
 
 
+# Batch
+# ------------------------------------------------------------------------------------------------
+
+class BatchAdmin(BaseAdmin):
+    fields = ('name', 'description', 'users')
+    list_display = ('name', 'subjects_count', 'sessions_count', 'users_l')
+
+    def users_l(self, obj):
+        return ', '.join(map(str, obj.users.all()))
+    users_l.short_description = 'users'
+
+    def sessions_count(self, obj):
+        return Session.objects.filter(batch=obj).count()
+    sessions_count.short_description = '# sessions'
+
+    def subjects_count(self, obj):
+        return Subject.objects.filter(batch=obj).count()
+    subjects_count.short_description = '# subjects'
+
+
 # Subject
 # ------------------------------------------------------------------------------------------------
 
@@ -314,7 +334,7 @@ class SubjectAdmin(BaseAdmin):
                                 ('cull_', 'cull_reason_'),
                                 'ear_mark',
                                 'protocol_number', 'description',
-                                'lab', 'projects', 'json', 'subject_history')}),
+                                'lab', 'projects', 'batch', 'json', 'subject_history')}),
         ('HOUSING (read-only, edit widget at the bottom of the page)',
          {'fields': HOUSING_FIELDS, 'classes': ('extrapretty',), }),
         ('PROFILE', {'fields': ('species', 'strain', 'source', 'line', 'litter',
@@ -340,7 +360,7 @@ class SubjectAdmin(BaseAdmin):
 
     list_display = ['nickname', 'weight_percent', 'birth_date', 'sex_l', 'alive', 'session_count',
                     'responsible_user', 'lab', 'description',
-                    'project_l',  # 'session_projects_l',
+                    'project_l',  'batch_l', #'session_projects_l',
                     'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
                     ]
     search_fields = ['nickname',
@@ -350,6 +370,7 @@ class SubjectAdmin(BaseAdmin):
                      'cage',
                      'lab__name',
                      'projects__name',
+                     'batch_name',
                      ]
     readonly_fields = ('age_days', 'zygosities', 'subject_history',
                        'breeding_pair_l', 'litter_l', 'line_l',
@@ -401,6 +422,10 @@ class SubjectAdmin(BaseAdmin):
     def session_projects_l(self, sub):
         return ', '.join(sub.session_projects)
     session_projects_l.short_description = 'session proj'
+
+    def session_batch_l(self, sub):
+        return ', '.join(sub.session_batch)
+    session_batch_l.short_description = 'session batch'
 
     def session_count(self, sub):
         return sub.sessions_count
@@ -463,6 +488,12 @@ class SubjectAdmin(BaseAdmin):
         # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
         return '\n'.join(list(obj.projects.all().values_list('name', flat=True)))
     project_l.short_description = 'projects'
+
+    def batch_l(self, obj):
+        # url = get_admin_url(obj.line)
+        # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
+        return '\n'.join(list(obj.batch.all().values_list('name', flat=True)))
+    batch_l.short_description = 'batch'
 
     def zygosities(self, obj):
         return '; '.join(obj.zygosity_strings())
@@ -1324,6 +1355,7 @@ mysite.register(LabMember, LabMemberAdmin)
 mysite.register(Group)
 
 mysite.register(Project, ProjectAdmin)
+mysite.register(Batch, BatchAdmin)
 mysite.register(Subject, SubjectAdmin)
 mysite.register(Litter, LitterAdmin)
 mysite.register(Line, LineAdmin)

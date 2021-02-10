@@ -152,6 +152,9 @@ class BaseActionAdmin(BaseAdmin):
     def projects(self, obj):
         return ', '.join(p.name for p in obj.subject.projects.all())
 
+    def batch(self, obj):
+        return ', '.join(p.name for p in obj.subject.batch.all())
+
     def _get_last_subject(self, request):
         return getattr(request, 'session', {}).get('last_subject_id', None)
 
@@ -223,7 +226,7 @@ class WaterAdministrationAdmin(BaseActionAdmin):
     fields = ['subject', 'date_time', 'water_administered', 'water_type', 'adlib', 'user',
               'session_l']
     list_display = ['subject_l', 'water_administered', 'user', 'date_time', 'water_type',
-                    'adlib', 'session_l', 'projects']
+                    'adlib', 'session_l', 'projects', 'batch']
     list_display_links = ('water_administered', )
     list_select_related = ('subject', 'user')
     ordering = ['-date_time', 'subject__nickname']
@@ -470,22 +473,23 @@ class SessionAdmin(BaseActionAdmin):
                     'task_protocol', 'qc', 'user_list', 'project_']
     list_display_links = ['start_time']
     fields = BaseActionAdmin.fields + [
-        'repo_url', 'qc', 'extended_qc', 'project', ('type', 'task_protocol', ), 'number',
+        'repo_url', 'qc', 'extended_qc', 'project', 'batch', ('type', 'task_protocol', ), 'number',
         'n_correct_trials', 'n_trials', 'weighing']
     list_filter = [('users', RelatedDropdownFilter),
                    ('start_time', DateRangeFilter),
                    ('project', RelatedDropdownFilter),
+                   ('batch', RelatedDropdownFilter),
                    ('lab', RelatedDropdownFilter),
                    ('subject__projects', RelatedDropdownFilter)
                    ]
-    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'users__username',
+    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'batch_name', 'users__username',
                      'task_protocol')
     ordering = ('-start_time', 'task_protocol', 'lab')
     inlines = [WaterAdminInline, DatasetInline, NoteInline]
     readonly_fields = ['repo_url', 'task_protocol', 'weighing', 'qc', 'extended_qc']
 
     def get_form(self, request, obj=None, **kwargs):
-        from subjects.admin import Project
+        from subjects.admin import Project, Batch
         from django.db.models import Q
         form = super(SessionAdmin, self).get_form(request, obj, **kwargs)
         if form.base_fields and not request.user.is_superuser:
@@ -510,8 +514,13 @@ class SessionAdmin(BaseActionAdmin):
     def project_(self, obj):
         return getattr(obj.project, 'name', None)
 
+    def batch_(self, obj):
+        return getattr(obj.batch, 'name', None)
+
     def repo_url(self, obj):
         url = settings.SESSION_REPO_URL.format(
+            project=getattr(obj.project, 'name', None),
+            batch=getattr(obj.batch, 'name', None),
             lab=obj.subject.lab.name,
             subject=obj.subject.nickname,
             date=obj.start_time.date(),
@@ -620,6 +629,9 @@ class CullAdmin(BaseAdmin):
 
     def projects(self, obj):
         return ', '.join(p.name for p in obj.subject.projects.all())
+
+    def batch(self, obj):
+        return ', '.join(p.name for p in obj.subject.batch.all())
 
 
 admin.site.register(ProcedureType, ProcedureTypeAdmin)

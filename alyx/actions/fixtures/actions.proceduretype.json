@@ -64,15 +64,6 @@
 },
 {
  "model": "actions.proceduretype",
- "pk": "73da8c37-b206-4726-a66b-ed8b965d2bb0",
- "fields": {
-  "name": "fUSi window",
-  "json": null,
-  "description": "Headplate implant + large craniotomy (4.5mm x 9mm) + PMP window implant."
- }
-},
-{
- "model": "actions.proceduretype",
  "pk": "78acc069-12d2-4e03-b7ba-febb2580ea7e",
  "fields": {
   "name": "Coverslip implant",

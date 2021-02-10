@@ -6,14 +6,14 @@ from django.contrib.contenttypes.models import ContentType
 from alyx.base import BaseSerializerEnumField
 from .models import (ProcedureType, Session, WaterAdministration, Weighing, WaterType,
                      WaterRestriction)
-from subjects.models import Subject, Project
+from subjects.models import Subject, Project, Batch
 from data.models import Dataset, DatasetType, FileRecord
 from misc.models import LabLocation, Lab
 from experiments.serializers import ProbeInsertionSessionSerializer
 from misc.serializers import NoteSerializer
 
 
-SESSION_FIELDS = ('subject', 'users', 'location', 'procedures', 'lab', 'project', 'type',
+SESSION_FIELDS = ('subject', 'users', 'location', 'procedures', 'lab', 'project', 'batch', 'type',
                   'task_protocol', 'number', 'start_time', 'end_time', 'narrative',
                   'parent_session', 'n_correct_trials', 'n_trials', 'url', 'extended_qc', 'qc',
                   'wateradmin_session_related', 'data_dataset_session_related')
@@ -129,15 +129,19 @@ class SessionListSerializer(BaseActionSerializer):
                                            slug_field='name',
                                            queryset=Project.objects.all())
 
+    batch = serializers.SlugRelatedField(read_only=False,
+                                           slug_field='name',
+                                           queryset=Batch.objects.all())
+
     @staticmethod
     def setup_eager_loading(queryset):
         """ Perform necessary eager loading of data to avoid horrible performance."""
-        queryset = queryset.select_related('subject', 'lab', 'project')
+        queryset = queryset.select_related('subject', 'lab', 'project', 'batch')
         return queryset.order_by('-start_time')
 
     class Meta:
         model = Session
-        fields = ('subject', 'start_time', 'number', 'lab', 'project', 'url', 'task_protocol')
+        fields = ('subject', 'start_time', 'number', 'lab', 'project', 'batch', 'url', 'task_protocol')
 
 
 class SessionDetailSerializer(BaseActionSerializer):
@@ -147,6 +151,8 @@ class SessionDetailSerializer(BaseActionSerializer):
     probe_insertion = ProbeInsertionSessionSerializer(read_only=True, many=True)
     project = serializers.SlugRelatedField(read_only=False, slug_field='name', many=False,
                                            queryset=Project.objects.all(), required=False)
+    batch = serializers.SlugRelatedField(read_only=False, slug_field='name', many=False,
+                                           queryset=Batch.objects.all(), required=False)
     notes = NoteSerializer(read_only=True, many=True)
     qc = BaseSerializerEnumField(required=False)
 

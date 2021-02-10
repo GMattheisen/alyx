@@ -111,6 +111,12 @@ urlpatterns = [
     path('projects/<str:name>', sv.ProjectDetail.as_view(),
          name="project-detail"),
 
+    path('batch', sv.ProjectList.as_view(),
+         name="batch-list"),
+
+    path('batch/<str:name>', sv.ProjectDetail.as_view(),
+         name="batch-detail"),
+
     path('register-file', register_file,
          name="register-file"),
 

@@ -122,6 +122,19 @@ class Project(BaseModel):
         return "<Project %s>" % self.name
 
 
+class Batch(BaseModel):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.CharField(
+        max_length=1023, blank=True, help_text="Description of the batch")
+
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True,
+        help_text="Persons associated to the batch.")
+
+    def __str__(self):
+        return "<Batch %s>" % self.name
+
+
 class Subject(BaseModel):
     """Metadata about an experimental subject (animal or human)."""
     SEXES = (
@@ -175,6 +188,10 @@ class Subject(BaseModel):
     projects = models.ManyToManyField(
         Project, blank=True, verbose_name="Subject Projects",
         help_text='Project associated to this session')
+
+    batch = models.ManyToManyField(
+        Batch, blank=True, verbose_name="Subject Batchs",
+        help_text='Batch associated to this session')
 
     cage = models.CharField(max_length=64, null=True, blank=True)
     request = models.ForeignKey('SubjectRequest', null=True, blank=True,
@@ -325,6 +342,11 @@ class Subject(BaseModel):
     def session_projects(self):
         """List of projects that have at least one session with this subject."""
         return Project.objects.filter(session__subject=self).distinct()
+
+    @property
+    def session_batch(self):
+        """List of batch that have at least one session with this subject."""
+        return Batch.objects.filter(session__subject=self).distinct()
 
     def save(self, *args, **kwargs):
         from actions.models import WaterRestriction, Cull, CullMethod
