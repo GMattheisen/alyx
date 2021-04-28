@@ -13,8 +13,9 @@ STOCK_MANAGERS = ('charu',)
 WEIGHT_THRESHOLD = 0.75
 DEFAULT_LAB_NAME = 'mrsicflogellab'
 DEFAULT_LAB_PK = '4027da48-7be3-43ec-a222-f75dffe36872'
-SESSION_REPO_URL = \
-    "home/glynism/Desktop/mrsicflogellab/public/projects/{project}/{batch}/DAQ/{subject}/{date}/{number:03d}/"
+#SESSION_REPO_URL = \
+#    "home/glynism/Desktop/mrsicflogellab/public/projects/{project}/{batch}/DAQ/{subject}/{date}/{number:03d}/"
+SESSION_REPO_URL = "mnt/glynism/winstor/swc/public/projects/{project}/ALF/{subject}/{date}/{number:03d}/"
 NARRATIVE_TEMPLATES = {
     'Headplate implant': dedent('''ss
     == General ==

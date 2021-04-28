@@ -1,4 +1,3 @@
-#!/bin/bash
 # This file must be used with "source bin/activate" *from bash*
 # you cannot run it directly
 
@@ -47,7 +46,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV='/home/glynism/Desktop/alyx/alyxvenv'
+VIRTUAL_ENV='/var/www/alyx/alyxvenv'
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

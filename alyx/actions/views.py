@@ -196,7 +196,6 @@ class SessionFilter(BaseFilterSet):
     extended_qc = django_filters.CharFilter(field_name='extended_qc',
                                             method=('filter_extended_qc'))
     project = django_filters.CharFilter(field_name='project__name', lookup_expr=('icontains'))
-    batch = django_filters.CharFilter(field_name='batch__name', lookup_expr=('icontains'))
     # brain region filters
     atlas_name = django_filters.CharFilter(field_name='name__icontains', method='atlas')
     atlas_acronym = django_filters.CharFilter(field_name='acronym__iexact', method='atlas')
