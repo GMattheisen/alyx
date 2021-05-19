@@ -16,7 +16,7 @@ from misc.serializers import NoteSerializer
 SESSION_FIELDS = ('subject', 'users', 'location', 'procedures', 'lab', 'project', 'type',
                   'task_protocol', 'number', 'start_time', 'end_time', 'narrative',
                   'parent_session', 'n_correct_trials', 'n_trials', 'url', 'extended_qc', 'qc',
-                  'wateradmin_session_related', 'data_dataset_session_related')
+                  'wateradmin_session_related', 'data_dataset_session_related', 'dset_types')
 
 
 def _log_entry(instance, user):
@@ -137,7 +137,7 @@ class SessionListSerializer(BaseActionSerializer):
 
     class Meta:
         model = Session
-        fields = ('subject', 'start_time', 'number', 'lab', 'project', 'url', 'task_protocol')
+        fields = ('subject', 'start_time', 'number', 'lab', 'project', 'url', 'task_protocol', 'data_dataset_session_related', 'dset_types')
 
 
 class SessionDetailSerializer(BaseActionSerializer):

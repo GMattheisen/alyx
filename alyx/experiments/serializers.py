@@ -18,7 +18,7 @@ class SessionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Session
-        fields = ('subject', 'start_time', 'number', 'lab', 'id', 'task_protocol')
+        fields = ('subject', 'start_time', 'number', 'lab', 'id', 'task_protocol', 'dset_types')
 
 
 class TrajectoryEstimateSerializer(serializers.ModelSerializer):

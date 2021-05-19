@@ -1,7 +1,7 @@
 import base64
 import json
 import logging
-
+import getpass
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -441,15 +441,16 @@ class DatasetInline(BaseInlineAdmin):
     show_change_link = True
     model = Dataset
     extra = 1
-    fields = ('name', 'dataset_type', 'collection', '_online', 'version', 'created_by',
+    fields = ('name', 'dataset_type', 'collection', #'_online',
+              'version', 'created_by',
               'created_datetime')
     readonly_fields = fields
     ordering = ("name",)
 
-    def _online(self, obj):
-        return obj.online
-    _online.short_description = 'On server'
-    _online.boolean = True
+    #def _online(self, obj):
+    #    return obj.online
+    #_online.short_description = 'On server'
+    #_online.boolean = True
 
 
 class WaterAdminInline(BaseInlineAdmin):
@@ -466,12 +467,13 @@ def _pass_narrative_templates(context):
 
 
 class SessionAdmin(BaseActionAdmin):
-    list_display = ['subject_l', 'start_time', 'number', 'lab', 'dataset_count',
-                    'task_protocol', 'qc', 'user_list', 'project_']
+    list_display = ['subject_l', 'start_time', 'number', 'lab', #'dataset_count,
+                    'task_protocol', #'qc',
+                    'user_list', 'project_', 'dset_types']
     list_display_links = ['start_time']
     fields = BaseActionAdmin.fields + [
         'repo_url', 'qc', 'extended_qc', 'project', ('type', 'task_protocol', ), 'number',
-        'n_correct_trials', 'n_trials', 'weighing']
+        'n_correct_trials', 'n_trials', 'weighing', 'dset_types']
     list_filter = [('users', RelatedDropdownFilter),
                    ('start_time', DateRangeFilter),
                    ('project', RelatedDropdownFilter),
@@ -479,10 +481,10 @@ class SessionAdmin(BaseActionAdmin):
                    ('subject__projects', RelatedDropdownFilter)
                    ]
     search_fields = ('subject__nickname', 'lab__name', 'project__name', 'users__username',
-                     'task_protocol')
+                     'task_protocol', 'dset_types')
     ordering = ('-start_time', 'task_protocol', 'lab')
     inlines = [WaterAdminInline, DatasetInline, NoteInline]
-    readonly_fields = ['repo_url', 'task_protocol', 'weighing', 'qc', 'extended_qc']
+    readonly_fields = ['repo_url', 'task_protocol', 'weighing', 'qc', 'extended_qc', 'dset_types']
 
     def get_form(self, request, obj=None, **kwargs):
         from subjects.admin import Project
@@ -512,6 +514,7 @@ class SessionAdmin(BaseActionAdmin):
 
     def repo_url(self, obj):
         url = settings.SESSION_REPO_URL.format(
+            username=getpass.getuser(),
             project=getattr(obj.project, 'name', None),
             lab=obj.subject.lab.name,
             subject=obj.subject.nickname,

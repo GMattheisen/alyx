@@ -240,6 +240,7 @@ class Session(BaseAction):
     number = models.IntegerField(null=True, blank=True,
                                  help_text="Optional session number for this level")
     task_protocol = models.CharField(max_length=1023, blank=True, default='')
+    dset_types = JSONField(null=True, blank=True)
     n_trials = models.IntegerField(blank=True, null=True)
     n_correct_trials = models.IntegerField(blank=True, null=True)
 
