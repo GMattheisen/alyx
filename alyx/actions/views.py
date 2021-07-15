@@ -198,6 +198,7 @@ class SessionFilter(BaseFilterSet):
     extended_qc = django_filters.CharFilter(field_name='extended_qc',
                                             method=('filter_extended_qc'))
     project = django_filters.CharFilter(field_name='project__name', lookup_expr=('icontains'))
+    subproject = django_filters.CharFilter(field_name='subproject__name', lookup_expr=('icontains'))
     # brain region filters
     atlas_name = django_filters.CharFilter(field_name='name__icontains', method='atlas')
     atlas_acronym = django_filters.CharFilter(field_name='acronym__iexact', method='atlas')
@@ -305,6 +306,7 @@ class SessionAPIList(generics.ListCreateAPIView):
     -   **task_protocol** (icontains)
     -   **location**: location name (icontains)
     -   **project**: project name (icontains)
+    -   **subproject**: subproject name (icontains)
     -   **json**: queries on json fields, for example here `tutu`
         -   exact/equal lookup: `/sessions?extended_qc=tutu,True`,
         -   gte lookup: `/sessions/?extended_qc=tutu__gte,0.5`,

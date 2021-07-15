@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Allele, Line, Litter, Source, Species, Strain, Subject, Zygosity,
-                     Project)
+                     Project, Subproject)
 from actions.serializers import (WeighingDetailSerializer,
                                  WaterAdministrationDetailSerializer,
                                  )
@@ -9,7 +9,7 @@ from misc.models import Lab
 
 SUBJECT_LIST_SERIALIZER_FIELDS = ('nickname', 'url', 'id', 'responsible_user', 'birth_date',
                                   'age_weeks', 'death_date', 'species', 'sex', 'litter', 'strain',
-                                  'source', 'line', 'projects', 'session_projects',
+                                  'source', 'line', 'projects', 'subprojects', 'session_projects', 'session_subprojects', 
                                   'lab', 'genotype', 'description',
                                   'alive', 'reference_weight', 'last_water_restriction',
                                   'expected_water', 'remaining_water')
@@ -121,6 +121,19 @@ class SubjectListSerializer(_WaterRestrictionBaseSerializer):
         many=True,
         required=False,)
 
+    subprojects = serializers.SlugRelatedField(
+        read_only=False,
+        slug_field='name',
+        queryset=Subproject.objects.all(),
+        many=True,
+        required=False,)
+
+    session_subprojects = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name',
+        many=True,
+        required=False,)
+
     source = serializers.SlugRelatedField(
         read_only=False,
         slug_field='name',
@@ -177,4 +190,19 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', 'description', 'users')
         lookup_field = 'name'
         extra_kwargs = {'url': {'view_name': 'project-detail', 'lookup_field': 'name'}}
+
+class SubprojectSerializer(serializers.HyperlinkedModelSerializer):
+    users = serializers.SlugRelatedField(
+        read_only=False,
+        slug_field='username',
+        queryset=get_user_model().objects.all(),
+        many=True,
+        required=False,
+        default=serializers.CurrentUserDefault(),)
+
+    class Meta:
+        model = Subproject
+        fields = ('name', 'description', 'users')
+        lookup_field = 'name'
+        extra_kwargs = {'url': {'view_name': 'subproject-detail', 'lookup_field': 'name'}}
 

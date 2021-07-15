@@ -2,11 +2,11 @@ from rest_framework import generics, permissions
 import django_filters
 
 from alyx.base import BaseFilterSet
-from .models import Subject, Project
+from .models import Subject, Project, Subproject
 from .serializers import (SubjectListSerializer,
                           SubjectDetailSerializer,
                           WaterRestrictedSubjectListSerializer,
-                          ProjectSerializer
+                          ProjectSerializer, SubprojectSerializer
                           )
 
 
@@ -17,6 +17,7 @@ class SubjectFilter(BaseFilterSet):
     water_restricted = django_filters.BooleanFilter(method='filter_water_restricted')
     lab = django_filters.CharFilter('lab__name')
     project = django_filters.CharFilter('projects__name')
+    subproject = django_filters.CharFilter('subprojects__name')
 
     def filter_stock(self, queryset, name, value):
         if value is True:
@@ -68,6 +69,18 @@ class ProjectList(generics.ListCreateAPIView):
 class ProjectDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'name'
+
+class SubprojectList(generics.ListCreateAPIView):
+    queryset = Subproject.objects.all()
+    serializer_class = SubprojectSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'name'
+
+class SubprojectDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Subproject.objects.all()
+    serializer_class = SubprojectSerializer
     permission_classes = (permissions.IsAuthenticated,)
     lookup_field = 'name'
 

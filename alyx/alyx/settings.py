@@ -45,7 +45,7 @@ AUTH_USER_MODEL = 'misc.LabMember'
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
 
 LOGGING = {
     'version': 1,
@@ -199,7 +199,7 @@ REST_FRAMEWORK = {
     # ),
     'EXCEPTION_HANDLER': 'alyx.base.rest_filters_exception_handler',
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'PAGE_SIZE': 250,
+    'PAGE_SIZE': 10000,
 }
 
 # Internationalization

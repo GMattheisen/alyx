@@ -33,6 +33,7 @@
     <tr>
         <th>session</th>
         <th>project</th>
+	<th>subproject</th>
         <th>batch</th>
         <th>protocol</th>
         <th>qc</th>
@@ -47,6 +48,7 @@
     <tr>
         <td><a href="{% url 'admin:actions_session_change' obj.id %}">{{ obj | stringformat:"s"}}</a></td>
         <td>{{ obj.project.name }}</td>
+	<td>{{ obj.subproject.name }}</td>
         <td>{{ obj.batch.name }}</td>
         <td>{{ obj.task_protocol }}</td>
         {% if obj.qc == 50%}  {# CRITICAL red #}

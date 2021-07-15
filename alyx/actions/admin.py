@@ -152,6 +152,9 @@ class BaseActionAdmin(BaseAdmin):
     def projects(self, obj):
         return ', '.join(p.name for p in obj.subject.projects.all())
 
+    def subprojects(self, obj):
+        return ', '.join(p.name for p in obj.subject.subprojects.all())
+
     def _get_last_subject(self, request):
         return getattr(request, 'session', {}).get('last_subject_id', None)
 
@@ -469,18 +472,19 @@ def _pass_narrative_templates(context):
 class SessionAdmin(BaseActionAdmin):
     list_display = ['subject_l', 'start_time', 'number', 'lab', #'dataset_count,
                     'task_protocol', #'qc',
-                    'user_list', 'project_', 'dset_types']
+                    'user_list', 'project_', 'subproject', 'dset_types']
     list_display_links = ['start_time']
     fields = BaseActionAdmin.fields + [
-        'repo_url', 'qc', 'extended_qc', 'project', ('type', 'task_protocol', ), 'number',
+        'repo_url', 'qc', 'extended_qc', 'project', 'subproject', ('type', 'task_protocol', ), 'number',
         'n_correct_trials', 'n_trials', 'weighing', 'dset_types']
     list_filter = [('users', RelatedDropdownFilter),
                    ('start_time', DateRangeFilter),
                    ('project', RelatedDropdownFilter),
+                   ('subproject', RelatedDropdownFilter),
                    ('lab', RelatedDropdownFilter),
                    ('subject__projects', RelatedDropdownFilter)
                    ]
-    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'users__username',
+    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'subproject_name', 'users__username',
                      'task_protocol', 'dset_types')
     ordering = ('-start_time', 'task_protocol', 'lab')
     inlines = [WaterAdminInline, DatasetInline, NoteInline]
@@ -511,6 +515,9 @@ class SessionAdmin(BaseActionAdmin):
 
     def project_(self, obj):
         return getattr(obj.project, 'name', None)
+    
+    def subproject_(self, obj):
+        return getattr(obj.subproject, 'name', None)
 
     def repo_url(self, obj):
         url = settings.SESSION_REPO_URL.format(

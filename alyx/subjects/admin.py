@@ -16,7 +16,7 @@ from alyx.base import (BaseAdmin, BaseInlineAdmin, DefaultListFilter, get_admin_
                        _iter_history_changes)
 from .models import (Allele, BreedingPair, GenotypeTest, Line, Litter, Sequence, Source,
                      Species, Strain, Subject, SubjectRequest, Zygosity, ZygosityRule,
-                     Project
+                     Project, Subproject
                      )
 from actions.models import (
     Surgery, Session, OtherAction, WaterAdministration, WaterRestriction, Weighing)
@@ -188,6 +188,25 @@ class ProjectAdmin(BaseAdmin):
         return Subject.objects.filter(projects=obj).count()
     subjects_count.short_description = '# subjects'
 
+# Subproject
+# ------------------------------------------------------------------------------------------------
+
+class SubprojectAdmin(BaseAdmin):
+    fields = ('name', 'description', 'users')
+    list_display = ('name', 'subjects_count', 'sessions_count', 'users_l')
+
+    def users_l(self, obj):
+        return ', '.join(map(str, obj.users.all()))
+    users_l.short_description = 'users'
+
+    def sessions_count(self, obj):
+        return Session.objects.filter(subproject=obj).count()
+    sessions_count.short_description = '# sessions'
+
+    def subjects_count(self, obj):
+        return Subject.objects.filter(subprojects=obj).count()
+    subjects_count.short_description = '# subjects'
+
 
 # Subject
 # ------------------------------------------------------------------------------------------------
@@ -314,7 +333,7 @@ class SubjectAdmin(BaseAdmin):
                                 ('cull_', 'cull_reason_'),
                                 'ear_mark',
                                 'protocol_number', 'description',
-                                'lab', 'projects', 'json', 'subject_history')}),
+                                'lab', 'projects', 'subprojects', 'json', 'subject_history')}),
         ('HOUSING (read-only, edit widget at the bottom of the page)',
          {'fields': HOUSING_FIELDS, 'classes': ('extrapretty',), }),
         ('PROFILE', {'fields': ('species', 'strain', 'source', 'line', 'litter',
@@ -341,7 +360,7 @@ class SubjectAdmin(BaseAdmin):
     list_display = ['nickname', 'weight_percent', 'birth_date', 'sex_l', 'alive', 'session_count',
                     'responsible_user', 'lab', 'description',
                     'project_l',  #'session_projects_l',
-                    'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
+                    'subproject_l', 'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
                     ]
     search_fields = ['nickname',
                      'responsible_user__first_name',
@@ -349,7 +368,7 @@ class SubjectAdmin(BaseAdmin):
                      'responsible_user__username',
                      'cage',
                      'lab__name',
-                     'projects__name',
+                     'projects__name', 'subprojects_name',
                      ]
     readonly_fields = ('age_days', 'zygosities', 'subject_history',
                        'breeding_pair_l', 'litter_l', 'line_l',
@@ -463,6 +482,12 @@ class SubjectAdmin(BaseAdmin):
         # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
         return '\n'.join(list(obj.projects.all().values_list('name', flat=True)))
     project_l.short_description = 'projects'
+
+    def subproject_l(self, obj):
+        # url = get_admin_url(obj.line)
+        # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
+        return '\n'.join(list(obj.subprojects.all().values_list('name', flat=True)))
+    subproject_l.short_description = 'subprojects'
 
     def zygosities(self, obj):
         return '; '.join(obj.zygosity_strings())
@@ -1324,6 +1349,7 @@ mysite.register(LabMember, LabMemberAdmin)
 mysite.register(Group)
 
 mysite.register(Project, ProjectAdmin)
+mysite.register(Subproject, SubprojectAdmin)
 mysite.register(Subject, SubjectAdmin)
 mysite.register(Litter, LitterAdmin)
 mysite.register(Line, LineAdmin)
