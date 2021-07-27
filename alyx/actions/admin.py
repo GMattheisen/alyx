@@ -472,7 +472,7 @@ def _pass_narrative_templates(context):
 class SessionAdmin(BaseActionAdmin):
     list_display = ['subject_l', 'start_time', 'number', 'lab', #'dataset_count,
                     'task_protocol', #'qc',
-                    'user_list', 'project_', 'subproject', 'dset_types']
+                    'user_list', 'project_', 'subproject_', 'dset_types']
     list_display_links = ['start_time']
     fields = BaseActionAdmin.fields + [
         'repo_url', 'qc', 'extended_qc', 'project', 'subproject', ('type', 'task_protocol', ), 'number',
@@ -484,7 +484,7 @@ class SessionAdmin(BaseActionAdmin):
                    ('lab', RelatedDropdownFilter),
                    ('subject__projects', RelatedDropdownFilter)
                    ]
-    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'subproject_name', 'users__username',
+    search_fields = ('subject__nickname', 'lab__name', 'project__name', 'subproject__name', 'users__username',
                      'task_protocol', 'dset_types')
     ordering = ('-start_time', 'task_protocol', 'lab')
     inlines = [WaterAdminInline, DatasetInline, NoteInline]

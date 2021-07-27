@@ -278,7 +278,7 @@ class SessionInline(BaseInlineAdmin):
     model = Session
     extra = 1
     fields = ['procedures', 'narrative', 'start_time', 'users', 'location']
-    readonly_fields = fields
+    #readonly_fields = fields
     classes = ['collapse']
     ordering = ('-start_time',)
 
@@ -333,7 +333,9 @@ class SubjectAdmin(BaseAdmin):
                                 ('cull_', 'cull_reason_'),
                                 'ear_mark',
                                 'protocol_number', 'description',
-                                'lab', 'projects', 'subprojects', 'json', 'subject_history')}),
+                                'lab', 'projects',
+                                'subprojects',
+                                'json', 'subject_history')}),
         ('HOUSING (read-only, edit widget at the bottom of the page)',
          {'fields': HOUSING_FIELDS, 'classes': ('extrapretty',), }),
         ('PROFILE', {'fields': ('species', 'strain', 'source', 'line', 'litter',
@@ -360,7 +362,8 @@ class SubjectAdmin(BaseAdmin):
     list_display = ['nickname', 'weight_percent', 'birth_date', 'sex_l', 'alive', 'session_count',
                     'responsible_user', 'lab', 'description',
                     'project_l',  #'session_projects_l',
-                    'subproject_l', 'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
+                    'subproject_l',
+                    'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
                     ]
     search_fields = ['nickname',
                      'responsible_user__first_name',
@@ -368,9 +371,12 @@ class SubjectAdmin(BaseAdmin):
                      'responsible_user__username',
                      'cage',
                      'lab__name',
-                     'projects__name', 'subprojects_name',
+                     'projects__name',
+                     'subprojects__name',
                      ]
-    readonly_fields = ('age_days', 'zygosities', 'subject_history',
+    readonly_fields = (
+        'age_days',
+        'zygosities', 'subject_history',
                        'breeding_pair_l', 'litter_l', 'line_l',
                        'cage_changes', 'cull_', 'cull_reason_',
                        'death_date',
@@ -684,7 +690,8 @@ class SubjectInline(BaseInlineAdmin):
               'sequence1', 'result1',
               'sequence2', 'result2',
               'ear_mark', 'description')
-    readonly_fields = ('age_weeks', 'alive',
+    readonly_fields = (
+        'age_weeks', 'alive',
                        'sequence0', 'sequence1', 'sequence2',
                        )
     list_editable = ('cage',)
@@ -1176,7 +1183,6 @@ class SubjectRequestUserListFilter(DefaultListFilter):
 
 class SubjectInlineNonEditable(SubjectInline):
     readonly_fields = SubjectInline.fields
-
 
 class SubjectRequestForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):

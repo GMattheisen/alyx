@@ -161,6 +161,7 @@ class Subject(BaseModel):
                                 validators=[nickname_validator])
     species = models.ForeignKey('Species', null=True, blank=True, on_delete=models.SET_NULL,
                                 default=default_species)
+    
     litter = models.ForeignKey('Litter', null=True, blank=True, on_delete=models.SET_NULL)
     sex = models.CharField(max_length=1, choices=SEXES,
                            blank=True, default='U')
