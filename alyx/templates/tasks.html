@@ -5,7 +5,7 @@
 <table>
     <thead>
         <tr>
-        {% for graph in graphs %}
+        {% for graph in graphs %}2
             <th><a href="{% url 'tasks_status_graph' graph=graph %}">{{ graph }}</a></th>
         {% endfor %}
         <th>Queued</th>
@@ -34,6 +34,7 @@
         <th>session</th>
         <th>project</th>
 	<th>subproject</th>
+	<th>winstor_session</th>
         <th>batch</th>
         <th>protocol</th>
         <th>qc</th>
@@ -49,6 +50,7 @@
         <td><a href="{% url 'admin:actions_session_change' obj.id %}">{{ obj | stringformat:"s"}}</a></td>
         <td>{{ obj.project.name }}</td>
 	<td>{{ obj.subproject.name }}</td>
+	<td>{{obj.winstor_session.name }}</td>
         <td>{{ obj.batch.name }}</td>
         <td>{{ obj.task_protocol }}</td>
         {% if obj.qc == 50%}  {# CRITICAL red #}

@@ -33,7 +33,7 @@ class TasksStatusView(ListView):
         else:
             context['task_names'] = []
         context['title'] = 'Tasks Recap'
-        context['site_header'] = 'Alyx'
+        context['site_header'] = 'Mrsic-Flogel Lab'
         return context
 
     def get_queryset(self):

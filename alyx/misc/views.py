@@ -33,6 +33,7 @@ def api_root(request, format=None):
         'sessions-url': reverse('session-list', request=request, format=format),
         'projects-url': reverse('project-list', request=request, format=format),
         'subprojects-url': reverse('subproject-list', request=request, format=format),
+        'winstor_sessions-url': reverse('winstor_session-list', request=request, format=format),
         #'batch-url': reverse('batch-list', request=request, format=format),
         'labs-url': reverse('lab-list', request=request, format=format),
         'datasets-url': reverse('dataset-list', request=request, format=format),

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Allele, Line, Litter, Source, Species, Strain, Subject, Zygosity,
-                     Project, Subproject)
+                     Project, Subproject, Winstor_session)
 from actions.serializers import (WeighingDetailSerializer,
                                  WaterAdministrationDetailSerializer,
                                  )
@@ -9,7 +9,8 @@ from misc.models import Lab
 
 SUBJECT_LIST_SERIALIZER_FIELDS = ('nickname', 'url', 'id', 'responsible_user', 'birth_date',
                                   'age_weeks', 'death_date', 'species', 'sex', 'litter', 'strain',
-                                  'source', 'line', 'projects', 'subprojects', 'session_projects', 'session_subprojects', 
+                                  'source', 'line', 'projects', 'subprojects', 'winstor_sessions',
+                                  'session_projects', 'session_subprojects', 'session_winstor_sessions',
                                   'lab', 'genotype', 'description',
                                   'alive', 'reference_weight', 'last_water_restriction',
                                   'expected_water', 'remaining_water')
@@ -134,6 +135,19 @@ class SubjectListSerializer(_WaterRestrictionBaseSerializer):
         many=True,
         required=False,)
 
+    winstor_sessions = serializers.SlugRelatedField(
+        read_only=False,
+        slug_field='name',
+        queryset=Winstor_session.objects.all(),
+        many=True,
+        required=False,)
+
+    session_winstor_sessions = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name',
+        many=True,
+        required=False,)
+
     source = serializers.SlugRelatedField(
         read_only=False,
         slug_field='name',
@@ -205,4 +219,20 @@ class SubprojectSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('name', 'description', 'users')
         lookup_field = 'name'
         extra_kwargs = {'url': {'view_name': 'subproject-detail', 'lookup_field': 'name'}}
+
+class Winstor_sessionSerializer(serializers.HyperlinkedModelSerializer):
+    users = serializers.SlugRelatedField(
+        read_only=False,
+        slug_field='username',
+        queryset=get_user_model().objects.all(),
+        many=True,
+        required=False,
+        default=serializers.CurrentUserDefault(),)
+
+    class Meta:
+        model = Winstor_session
+        fields = ('name', 'description', 'users')
+        lookup_field = 'name'
+        extra_kwargs = {'url': {'view_name': 'winstor_session-detail', 'lookup_field': 'name'}}
+
 

@@ -2,11 +2,12 @@ from rest_framework import generics, permissions
 import django_filters
 
 from alyx.base import BaseFilterSet
-from .models import Subject, Project, Subproject
+from .models import Subject, Project, Subproject, Winstor_session
 from .serializers import (SubjectListSerializer,
                           SubjectDetailSerializer,
                           WaterRestrictedSubjectListSerializer,
-                          ProjectSerializer, SubprojectSerializer
+                          ProjectSerializer, SubprojectSerializer,
+                          Winstor_sessionSerializer
                           )
 
 
@@ -18,6 +19,7 @@ class SubjectFilter(BaseFilterSet):
     lab = django_filters.CharFilter('lab__name')
     project = django_filters.CharFilter('projects__name')
     subproject = django_filters.CharFilter('subprojects__name')
+    winstor_session = django_filters.CharFilter('winstor_sessions__name')
 
     def filter_stock(self, queryset, name, value):
         if value is True:
@@ -81,6 +83,18 @@ class SubprojectList(generics.ListCreateAPIView):
 class SubprojectDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Subproject.objects.all()
     serializer_class = SubprojectSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'name'
+
+class Winstor_sessionList(generics.ListCreateAPIView):
+    queryset = Winstor_session.objects.all()
+    serializer_class = Winstor_sessionSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'name'
+
+class Winstor_sessionDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Winstor_session.objects.all()
+    serializer_class = Winstor_sessionSerializer
     permission_classes = (permissions.IsAuthenticated,)
     lookup_field = 'name'
 

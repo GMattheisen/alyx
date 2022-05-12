@@ -239,6 +239,9 @@ class Session(BaseAction):
     subproject = models.ForeignKey('subjects.Subproject', null=True, blank=True,
                                 on_delete=models.SET_NULL, verbose_name='Session Subproject')
     
+    winstor_session = models.ForeignKey('subjects.Winstor_session', null=True, blank=True,
+                                on_delete=models.SET_NULL, verbose_name='Winstor Session')
+    
     type = models.CharField(max_length=255, null=True, blank=True,
                             help_text="User-defined session type (e.g. Base, Experiment)")
     number = models.IntegerField(null=True, blank=True,

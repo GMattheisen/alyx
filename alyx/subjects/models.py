@@ -121,6 +121,18 @@ class Project(BaseModel):
     def __str__(self):
         return "<Project %s>" % self.name
 
+class Winstor_session(BaseModel):
+    name = models.CharField(max_length=255, unique=True)
+    description = models.CharField(
+        max_length=1023, blank=True, help_text="Alternative session name from Winstor")
+
+    users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, blank=True,
+        help_text="Persons associated to the session.")
+
+    def __str__(self):
+        return "<Winstor session %s>" % self.name
+
 class Subproject(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     description = models.CharField(
@@ -131,7 +143,7 @@ class Subproject(BaseModel):
         help_text="Persons associated to the subproject.")
 
     def __str__(self):
-        return "<Subproject %s>" % self.name
+        return "<Subproject %s>" % self.name 
 
 
 class Subject(BaseModel):
@@ -191,6 +203,10 @@ class Subject(BaseModel):
     subprojects = models.ManyToManyField(
         Subproject, blank=True, verbose_name="Subject Subprojects",
         help_text='Subproject associated to this session')
+
+    winstor_sessions = models.ManyToManyField(
+        Winstor_session, blank=True, verbose_name="Winstor sessions",
+        help_text = 'Alternative session name from Winstor')
 
     cage = models.CharField(max_length=64, null=True, blank=True)
     request = models.ForeignKey('SubjectRequest', null=True, blank=True,
@@ -345,6 +361,10 @@ class Subject(BaseModel):
     def session_subprojects(self):
         """List of subprojects that have at least one session with this subject."""
         return Subproject.objects.filter(session__subject=self).distinct()
+
+    def session_winstor_sessions(self):
+        """List of winstor sessions that have at least one session with this subject."""
+        return Winstor_session.objects.filter(session__subject=self).distinct()
 
     def save(self, *args, **kwargs):
         from actions.models import WaterRestriction, Cull, CullMethod

@@ -16,7 +16,7 @@ from alyx.base import (BaseAdmin, BaseInlineAdmin, DefaultListFilter, get_admin_
                        _iter_history_changes)
 from .models import (Allele, BreedingPair, GenotypeTest, Line, Litter, Sequence, Source,
                      Species, Strain, Subject, SubjectRequest, Zygosity, ZygosityRule,
-                     Project, Subproject
+                     Project, Subproject, Winstor_session
                      )
 from actions.models import (
     Surgery, Session, OtherAction, WaterAdministration, WaterRestriction, Weighing)
@@ -207,7 +207,25 @@ class SubprojectAdmin(BaseAdmin):
         return Subject.objects.filter(subprojects=obj).count()
     subjects_count.short_description = '# subjects'
 
+# Winstor Session
+# ------------------------------------------------------------------------------------------------
 
+class Winstor_sessionAdmin(BaseAdmin):
+    fields = ('name', 'description', 'users')
+    list_display = ('name', 'subjects_count', 'sessions_count', 'users_l')
+
+    def users_l(self, obj):
+        return ', '.join(map(str, obj.users.all()))
+    users_l.short_description = 'users'
+
+    def sessions_count(self, obj):
+        return Session.objects.filter(winstor_session=obj).count()
+    sessions_count.short_description = '# sessions'
+
+    def subjects_count(self, obj):
+        return Subject.objects.filter(winstor_sessions=obj).count()
+    subjects_count.short_description = '# subjects'
+    
 # Subject
 # ------------------------------------------------------------------------------------------------
 
@@ -334,7 +352,7 @@ class SubjectAdmin(BaseAdmin):
                                 'ear_mark',
                                 'protocol_number', 'description',
                                 'lab', 'projects',
-                                'subprojects',
+                                'subprojects', 'winstor_sessions',
                                 'json', 'subject_history')}),
         ('HOUSING (read-only, edit widget at the bottom of the page)',
          {'fields': HOUSING_FIELDS, 'classes': ('extrapretty',), }),
@@ -362,7 +380,7 @@ class SubjectAdmin(BaseAdmin):
     list_display = ['nickname', 'weight_percent', 'birth_date', 'sex_l', 'alive', 'session_count',
                     'responsible_user', 'lab', 'description',
                     'project_l',  #'session_projects_l',
-                    'subproject_l',
+                    'subproject_l', 'winstor_session_l',
                     'ear_mark_', 'line_l', 'litter_l', 'zygosities', 'cage', 'breeding_pair_l',
                     ]
     search_fields = ['nickname',
@@ -373,6 +391,7 @@ class SubjectAdmin(BaseAdmin):
                      'lab__name',
                      'projects__name',
                      'subprojects__name',
+                     'winstor_sessions__name'
                      ]
     readonly_fields = (
         'age_days',
@@ -494,6 +513,12 @@ class SubjectAdmin(BaseAdmin):
         # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
         return '\n'.join(list(obj.subprojects.all().values_list('name', flat=True)))
     subproject_l.short_description = 'subprojects'
+
+    def winstor_session_l(self, obj):
+        # url = get_admin_url(obj.line)
+        # return format_html('<a href="{url}">{line}</a>', line=obj.line or '-', url=url)
+        return '\n'.join(list(obj.winstor_sessions.all().values_list('name', flat=True)))
+    winstor_session_l.short_description = 'winstor sessions'
 
     def zygosities(self, obj):
         return '; '.join(obj.zygosity_strings())
@@ -1356,6 +1381,7 @@ mysite.register(Group)
 
 mysite.register(Project, ProjectAdmin)
 mysite.register(Subproject, SubprojectAdmin)
+mysite.register(Winstor_session, Winstor_sessionAdmin)
 mysite.register(Subject, SubjectAdmin)
 mysite.register(Litter, LitterAdmin)
 mysite.register(Line, LineAdmin)

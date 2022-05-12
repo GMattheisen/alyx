@@ -525,9 +525,9 @@ def rest_filters_exception_handler(exc, context):
 
 
 mysite = MyAdminSite()
-mysite.site_header = 'Alyx'
-mysite.site_title = 'Alyx'
+mysite.site_header = 'Mrsic-Flogel Lab'
+mysite.site_title = 'Mrsic-Flogel Lab'
 mysite.site_url = None
-mysite.index_title = 'Welcome to Alyx'
+mysite.index_title = 'Welcome to the Mrsic-Flogel Lab database'
 
 admin.site = mysite

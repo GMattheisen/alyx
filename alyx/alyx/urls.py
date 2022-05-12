@@ -29,7 +29,7 @@ user_detail = mv.UserViewSet.as_view({
     'get': 'retrieve'
 })
 
-admin.site.site_header = 'Alyx'
+admin.site.site_header = 'Mrsic-Flogel Lab'
 
 urlpatterns = [
     path('', mv.api_root),
@@ -110,7 +110,19 @@ urlpatterns = [
 
     path('projects/<str:name>', sv.ProjectDetail.as_view(),
          name="project-detail"),
+ 
+    path('subprojects', sv.SubprojectList.as_view(),
+         name="subproject-list"),
 
+    path('subprojects/<str:name>', sv.SubprojectDetail.as_view(),
+         name="subproject-detail"),
+
+    path('winstor_sessions', sv.Winstor_sessionList.as_view(),
+         name="winstor_session-list"),
+
+    path('winstor_sessions/<str:name>', sv.Winstor_sessionDetail.as_view(),
+         name="winstor_session-detail"),
+    
     path('register-file', register_file,
          name="register-file"),
 

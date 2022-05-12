@@ -54,7 +54,7 @@ class SubjectHistoryListView(ListView):
                 reverse('admin:subjects_subject_change',
                         args=[subject.id]),
                 subject.nickname))
-        context['site_header'] = 'Alyx'
+        context['site_header'] = 'Mrsic-Flogel Lab'
         return context
 
     def get_queryset(self):
@@ -104,7 +104,7 @@ class WaterHistoryListView(ListView):
                 reverse('admin:subjects_subject_change',
                         args=[subject.id]),
                 subject.nickname))
-        context['site_header'] = 'Alyx'
+        context['site_header'] = 'Mrsic-Flogel Lab'
         url = reverse('weighing-plot', kwargs={'subject_id': subject.id})
         context['plot_url'] = url
         return context
@@ -156,7 +156,7 @@ class TrainingListView(ListView):
         today = (date.today()).strftime('%Y-%m-%d')
         next_week = (monday + timedelta(days=7)).strftime('%Y-%m-%d')
         context['title'] = 'Training history for %s' % monday.strftime('%Y-%m-%d')
-        context['site_header'] = 'Alyx'
+        context['site_header'] = 'Mrsic-Flogel Lab'
         context['prev_url'] = reverse('training', args=[previous_week])
         context['today_url'] = reverse('training', args=[today])
         context['next_url'] = reverse('training', args=[next_week])
@@ -199,6 +199,8 @@ class SessionFilter(BaseFilterSet):
                                             method=('filter_extended_qc'))
     project = django_filters.CharFilter(field_name='project__name', lookup_expr=('icontains'))
     subproject = django_filters.CharFilter(field_name='subproject__name', lookup_expr=('icontains'))
+    winstor_session = django_filters.CharFilter(field_name='winstor_session__name', lookup_expr=('icontains'))
+    
     # brain region filters
     atlas_name = django_filters.CharFilter(field_name='name__icontains', method='atlas')
     atlas_acronym = django_filters.CharFilter(field_name='acronym__iexact', method='atlas')
